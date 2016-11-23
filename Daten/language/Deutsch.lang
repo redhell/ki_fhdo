@@ -1,0 +1,134 @@
+//
+// Deutsche Übersetzung für Wumpus Server
+//
+#Translation#   				#Deutsch#
+##   							#Fehler#
+#Language#   					#Sprache#
+#LanguageChange#				#Sprache ändern#
+//
+// Datei Menü
+//
+#File# 			  				#Datei#
+#CreatNewLevel#					#Neues Level erstellen#
+#LoadWumpusWorld#				#Wumpus Level laden#
+#LoadPacmanWorld#				#Pacman Level laden#
+#SaveWumpusWorld#				#Wumpus Level speichern#
+#SavePacmanWorld#				#Pacman Level speichern#
+#Save#							#Spiel speichern#
+#Exit#   						#Beenden#
+//
+//
+//
+#Simulator#						#Simulator#
+#SetConfiguration#				#Server Konfiguration#
+#Status#						#Status#
+//
+//
+//
+#Options#						#Optionen#
+#ShowToolbar#					#Toolbar anzeigen#
+//
+//
+//
+#Help#							#Hilfe#
+#About#							#Über Uns#
+//
+//
+//
+#OK#							#OK#
+#Cancel#						#Abbrechen#
+//
+// Buttons
+//
+#StartServer#					#Server Starten#
+#StopServer#					#Server Stoppen#
+#Wall#							#Mauer#
+#Pit#							#Loch#
+#Wumpus#						#Wumpus#
+#Gold#							#Gold#
+#Cherry#                        #Kirsche#
+#Clean#							#Löschen#
+#Agent#							#Agent#
+#Reset#                         #Reset Map#
+//
+// Agent Popup
+//
+#Directions#					#Richtung#
+#NORTH#							#Nord#
+#EAST#							#Ost#
+#SOUTH#							#Süd#
+#WEST#							#West#
+#Team#							#Team#
+//
+// Wumpus Popup
+//
+#Typ#							#Wumpus Typ wählen#
+#Stay#							#Stehen#
+#Random#						#Zufall#
+#GoToPit#						#Gehe zum Loch#
+#GoToGold#						#Gehe zum Gold#
+#GoToWumpus#					#Gehe zum Wumpus#
+#GoToAgent#						#Gehe zum Agent#
+#WumpusKillAgent#				#Wumpus darf Agent Töten#
+//
+//
+//
+#StepSpeedWait#					#Pause zwischen den Schritten in Millisekunden#
+//
+// ServerKonfiguration
+//
+#General#						#Allgemein#
+#KonfigurationServer#		    #Server Konfiguration#
+#maxTrails#						#Anzahl der Versuche:#
+#maxSteps#						#Anzahl der Schritte pro Versuch:#
+#maxArrows#						#Anzahl der Schüsse pro Versuch:#
+#port#							#Port des Servers:#
+#anzAgent#						#Anzahl der Agents:#
+#ServerLegtStartPosFest#		#Startposition in der GUI festlegen#
+#PleaseSetAgent#                #Bitte einen Agenten (Agent-Button) setzten#
+#Team#							#Team#
+#aktivTeam#						#Teams aktivieren#
+#anzTeam#						#Anzahl der Teams#
+#anzTeamPerGamer#				#Anzahl der Spieler pro Team#
+#StartConfig#					#Informationen#
+#AgentStartPos#					#Startposition des Agenten bekannt#
+#AgentDirection#				#Richtung des Agenten bekannt#
+#GameSize#						#Spielfeldgröße bekannt#
+#WumpusStenchRadar#				#Gestank-Radar (Felder):#
+#GhostFearRadar#				#Angst-Radar (Felder): (NIY)#
+#WumpusRumbleDistance#			#Rumpel-Distanz (Felder):#
+#GhostRumbleDistance#			#Rumpel-Distanz (Felder): (NIY)#
+#Wallhack#	            		#Agent kann durch Wände sehen#
+//
+// Neues Spielfeld
+//
+#ConfigureWWServer#				#Konfigurieren Wumpus World Server#
+#anzRow#						#Anzahl Zeilen:#
+#anzColumn#						#Anzahl Spalten:#
+//
+//
+//
+#Delete#						#Löschen#
+//
+//
+//
+#NewConnection#					#Neue Verbindung#
+#ipLogin#						#IP des Servers:#
+#portLogin#						#Port des Servers:#
+//
+//
+//
+#Trails#						#Versuche#
+#Arrow#							#Pfeile#
+#Score#							#Bewertung#
+#Step#							#Schritte#
+#Left#							#Links#
+#Right#							#Rechts#
+#Goforward#						#Vorwärts#
+#Shoot#							#Schießen#
+#Grab#							#Graben#
+#Climb#							#Klettern#
+//
+//
+//
+#Perceptions#					#Wahrnehmungen#

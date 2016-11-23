@@ -1,0 +1,6 @@
+[10,10]
+Cell[3,3] : W 1 0
+Cell[4,7] : P
+Cell[4,8] : P
+Cell[8,3] : P
+Cell[9,6] : G
