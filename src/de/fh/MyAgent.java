@@ -17,14 +17,17 @@ import de.fh.connection.wumpus.AgentStartInfo;
  */
 class MyAgent implements IAgentActions, IAgentState {
 
-    private AgentAction nextAction = AgentAction.GO_FORWARD;
+    private AgentAction nextAction = AgentAction.START_GAME;
     private AgentPercept percept;
     private int actionEffect;
     private AgentStartInfo agentStartInfo;
 
+    private WorldInformation info;
+
     public static void main(String[] args) {
         MyAgent ki = new MyAgent();
         // Client connect to the server with given predefined settings
+
         WumpusClientConnector wumpusClient = new WumpusClientConnector(ki, ki);
         wumpusClient.run();
     }
@@ -37,6 +40,17 @@ class MyAgent implements IAgentActions, IAgentState {
      */
     @Override
     public void setStartInfo(StartInfo startInfo) {
+        info = new WorldInformation();
+
+        Thread guiThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                WorldVisualizer wv = new WorldVisualizer(info);
+
+            }
+        });
+        guiThread.start();
+
         /**
          *In dem Startinfo Objekt befinden sich alle Startinformationen,
          *auf die die "interne Welt", die Wissenbasis aufbaut
@@ -63,6 +77,9 @@ class MyAgent implements IAgentActions, IAgentState {
     @Override
     public void updateState(Percept percept, int actionEffect) {
 
+        AgentPercept agPercept = (AgentPercept) percept;
+
+        info.doUpdate(agPercept, nextAction, actionEffect);
         /**
          * Je nach Sichtbarkeit & Schwierigkeitsgrad (laut Serverkonfiguration)
          * aktuelle Wahrnehmung des Agenten
@@ -97,7 +114,7 @@ class MyAgent implements IAgentActions, IAgentState {
         }
 
         // Der Wumpus hat das Feld gewechselt
-        if (this.percept.isRumble() == true) {
+        if (this.percept.isRumble()) {
             System.out.println("<------- Der Wumpus bewegt sich! ------->");
         }
 
@@ -140,6 +157,9 @@ class MyAgent implements IAgentActions, IAgentState {
     public IAction chooseAction() {
 
         //TODO [ChooseAction]: Erweitern Sie diese chooseAction-Methode.
+        if(nextAction == AgentAction.START_GAME)
+            nextAction = AgentAction.GO_FORWARD;
+
 
         //Beispiel
         // Agent läuft immer im Kreis... und hebt das Gold auf
@@ -153,6 +173,7 @@ class MyAgent implements IAgentActions, IAgentState {
         switch (actionEffect) {
             case ActionEffect.INVALID_LOCATION:
                 nextAction = AgentAction.TURN_RIGHT;
+                info.turnRight();
                 break;
         }
 
