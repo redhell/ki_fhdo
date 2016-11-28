@@ -3,6 +3,7 @@ package de.fh;
 import de.fh.agentI.IAction;
 import de.fh.agentI.IAgentActions;
 import de.fh.agentI.IAgentState;
+import de.fh.agentMode.WorldDiscoverer;
 import de.fh.connection.ActionEffect;
 import de.fh.connection.Percept;
 import de.fh.connection.StartInfo;
@@ -10,7 +11,10 @@ import de.fh.connection.client.WumpusClientConnector;
 import de.fh.connection.wumpus.AgentAction;
 import de.fh.connection.wumpus.AgentPercept;
 import de.fh.connection.wumpus.AgentStartInfo;
+import de.fh.environment.WorldInformation;
+import de.fh.gui.WorldVisualizer;
 
+//TODO: Zu spät ....
 /*
  * DIESE KLASSE VERÄNDERN SIE BITTE NUR AN DEN GEKENNZEICHNETEN STELLEN
  * wenn die Bonusaufgabe bewertet werden soll.
@@ -18,9 +22,6 @@ import de.fh.connection.wumpus.AgentStartInfo;
 class MyAgent implements IAgentActions, IAgentState {
 
     private AgentAction nextAction = AgentAction.START_GAME;
-    private AgentPercept percept;
-    private int actionEffect;
-    private AgentStartInfo agentStartInfo;
 
     private WorldInformation info;
 
@@ -56,7 +57,7 @@ class MyAgent implements IAgentActions, IAgentState {
          *auf die die "interne Welt", die Wissenbasis aufbaut
          * Achtung: Die Feldgröße ist im Standard unbekannt also -1
          */
-        this.agentStartInfo = (AgentStartInfo) startInfo;
+        AgentStartInfo agentStartInfo = (AgentStartInfo) startInfo;
 
         //Startinformationen einmal ausgeben
         System.out.println(agentStartInfo.toString());
@@ -80,45 +81,7 @@ class MyAgent implements IAgentActions, IAgentState {
         AgentPercept agPercept = (AgentPercept) percept;
 
         info.doUpdate(agPercept, nextAction, actionEffect);
-        /**
-         * Je nach Sichtbarkeit & Schwierigkeitsgrad (laut Serverkonfiguration)
-         * aktuelle Wahrnehmung des Agenten
-         *
-         * percept enthält die verschiedene Wahrnehmungen,
-         * die mit folgenden Methoden zugreifbar sind:
-         *
-         * boolean isBump() -> Ist eine Wand zu spüren?
-         * boolean isBreeze() -> Ist eine Falle zu spüren?
-         * boolean isStench() -> Ist der Wumpus im Bereich zu riechen?
-         * boolean isScream() -> Wurde der Wumpus getroffen?
-         * boolean isGold() -> Ist Gold unter dem Agenten?
-         * int[][] getWumpusStenchRadar() -> In welcher Manhattendistanz ist der Wumpus zu riechen?
-         * boolean isRumble() -> Hat sich der Wumpus bewegt?
-         */
-        this.percept = (AgentPercept) percept;
 
-        /**
-         * Aktuelle Reaktion des Server auf die letzte übermittelte Action
-         */
-        this.actionEffect = actionEffect;
-
-        //TODO [UpdateState]: Erweitern Sie diese updateState-Methode
-
-        //Beispiel:
-
-        // In diesem Array kann man den Wumpus vielleicht wahrnehmen,
-        // wenn nah genug
-        for (int i = 0; this.percept.getWumpusStenchRadar()[i][0] != 0; i++) {
-            System.out.println("Dis: [" + this.percept.getWumpusStenchRadar()[i][0] + "]: "
-                    + this.percept.getWumpusStenchRadar()[i][1]);
-        }
-
-        // Der Wumpus hat das Feld gewechselt
-        if (this.percept.isRumble()) {
-            System.out.println("<------- Der Wumpus bewegt sich! ------->");
-        }
-
-        System.out.println("-----------");
 
         // Alle möglichen Serverrückmeldungen:
         switch (actionEffect) {
@@ -150,33 +113,13 @@ class MyAgent implements IAgentActions, IAgentState {
      * geeignete Tätigkeit. Wenn Sie wissen, dass ein Quadrat "unsicher"
      * ist, können Sie wegziehen
      *
-     * @param
      * @return Die nächste Pacman-Action die vom Server ausgeführt werden soll
      */
     @Override
     public IAction chooseAction() {
 
-        //TODO [ChooseAction]: Erweitern Sie diese chooseAction-Methode.
-        if(nextAction == AgentAction.START_GAME)
-            nextAction = AgentAction.GO_FORWARD;
-
-
-        //Beispiel
-        // Agent läuft immer im Kreis... und hebt das Gold auf
-        if (percept.isGold()) {
-            System.out.println("GOLD BELOW");
-            return AgentAction.GRAB;
-        }
-
-        nextAction = AgentAction.GO_FORWARD;
-
-        switch (actionEffect) {
-            case ActionEffect.INVALID_LOCATION:
-                nextAction = AgentAction.TURN_RIGHT;
-                info.turnRight();
-                break;
-        }
-
+        //discover world
+        nextAction = new WorldDiscoverer(info).nextMove();
 
         return nextAction;
     }

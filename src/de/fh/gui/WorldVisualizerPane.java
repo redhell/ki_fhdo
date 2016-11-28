@@ -1,4 +1,4 @@
-package de.fh;
+package de.fh.gui;
 
 import de.fh.gui.server.FieldPanel;
 import de.fh.helper.io.FileIO;
@@ -16,7 +16,7 @@ public class WorldVisualizerPane extends FieldPanel {
     public static Image IMAGE_UNKNOWN;
     //public static Image IMAGE_QUESTION_TRANSPARENT;
 
-    public WorldVisualizerPane(IDrawableWorld world) {
+    WorldVisualizerPane(IDrawableWorld world) {
         super(null);
         this.initImages();
         this.updateView();
@@ -41,7 +41,7 @@ public class WorldVisualizerPane extends FieldPanel {
             for(int i = 0; i < this.world.getMaxX(); ++i) {
                 for(int j = 0; j < this.world.getMaxY(); ++j) {
                     BufferedImage image = new BufferedImage(32, 32, 2);
-                    world.getDrawableField(i,j).drawField(image.getGraphics(), 32, 32);
+                    world.getDrawableField(i,j).drawField(image.getGraphics());
                     g.drawImage(image, i * 33 + 1, j * 33 + 1, 32, 32, null);
                 }
             }

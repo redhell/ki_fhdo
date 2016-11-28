@@ -1,4 +1,6 @@
-package de.fh;
+package de.fh.gui;
+
+import de.fh.environment.WorldInformation;
 
 import javax.swing.*;
 

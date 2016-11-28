@@ -1,4 +1,4 @@
-package de.fh;
+package de.fh.gui;
 
 public interface IDrawableWorld {
     int getMaxX();

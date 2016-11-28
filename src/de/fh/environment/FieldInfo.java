@@ -1,13 +1,16 @@
-package de.fh;
+package de.fh.environment;
+
+import de.fh.gui.IDrawableField;
+import de.fh.gui.WorldVisualizerPane;
+import de.fh.util.DIRECTION;
 
 import java.awt.*;
 
-public class FieldInfo implements IDrawableField   {
-    private WorldInformation wi;
+public class FieldInfo implements IDrawableField {
+    private WorldInformation worldInformation;
     private int x;
     private int y;
     private boolean isBreeze = false;
-    private boolean isPit = false;
     private boolean isWall = false;
     private boolean canBeWall = false;
     private boolean visited = false;
@@ -15,16 +18,24 @@ public class FieldInfo implements IDrawableField   {
     public FieldInfo(int x, int y, WorldInformation wi){
         this.x = x;
         this.y = y;
-        this.wi = wi;
-        if(x == 0 || y == 0) setWall(true);
+        this.worldInformation = wi;
+        if(x == 0 || y == 0) setWall();
     }
 
     public boolean isBreeze(){
         return isBreeze;
     }
 
-    public void setBreeze(boolean value){
-        this.isBreeze = value;
+    public void setBreeze(){
+        this.isBreeze = true;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public boolean canBePit(){
@@ -34,36 +45,37 @@ public class FieldInfo implements IDrawableField   {
         for (DIRECTION direction :
                 DIRECTION.values()) {
 
-            if(wi.getInfo(x + direction.xOffset, y + direction.yOffset).isBreeze()){
+            FieldInfo field = worldInformation.getInfo(x + direction.xOffset, y + direction.yOffset);
+            if(field == null) continue;
+            if(field.isBreeze()){
                 if(!hasBreeze){
                     canBePit = true;
                     hasBreeze = true;
                 }
             }
-            if(wi.getInfo(x + direction.xOffset, y + direction.yOffset).isVisited() &&
-                    !wi.getInfo(x + direction.xOffset, y + direction.yOffset).isBreeze()){
+            if(worldInformation.getInfo(x + direction.xOffset, y + direction.yOffset).isVisited() &&
+                    !worldInformation.getInfo(x + direction.xOffset, y + direction.yOffset).isBreeze()){
                 canBePit = false;
             }
         }
         return canBePit;
     }
 
-    public void setWall(boolean value){
-        this.isWall = value;
+    public void setWall(){
+        this.isWall = true;
     }
 
     public boolean isWall (){
         return isWall;
     }
 
-    public boolean canBeWall(){
-        if(visited) return false;
-        if(isWall) return true;
-        return canBeWall;
+    public boolean canBeWall() {
+        if (visited) return false;
+        return isWall || canBeWall;
     }
 
-    public void setCanBeWall(boolean value){
-        canBeWall = value;
+    public void setCanBeWall(){
+        canBeWall = true;
     }
 
     public void visit(){
@@ -76,8 +88,8 @@ public class FieldInfo implements IDrawableField   {
 
 
     @Override
-    public void drawField(Graphics g, int maxX, int maxY) {
-        if(wi.getCurrX() == x && wi.getCurrY() == y){
+    public void drawField(Graphics g) {
+        if(worldInformation.getCurrX() == x && worldInformation.getCurrY() == y){
             g.setColor(Color.blue);
             g.fillRect(4,4,24,24);
             return;
