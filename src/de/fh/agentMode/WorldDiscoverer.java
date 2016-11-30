@@ -36,12 +36,24 @@ public class WorldDiscoverer extends AgentMode {
             @Override
             public boolean isTarget(Position info) {
                 for (DIRECTION dir: DIRECTION.values()) {
-                    for (int i = 1; i< 2; i++){
+                    int x = info.getX() + dir.xOffset;
+                    int y = info.getY() + dir.yOffset;
+
+                    FieldInfo neighbour = worldInformation.getInfo(x,y);
+                    if(neighbour != null){
+                        if((worldInformation.getInfo(info) == null || !worldInformation.getInfo(info).isVisited())  && neighbour.canBePit()){
+                            return true;
+                        }
+                    }
+                }
+                for (int i = 1; i< 2; i++){
+                    for (DIRECTION dir: DIRECTION.values()) {
+
                         int x = info.getX() + dir.xOffset * i;
                         int y = info.getY() + dir.yOffset * i;
+                        FieldInfo neighbour = worldInformation.getInfo(x,y);
 
-                        FieldInfo field = worldInformation.getInfo(x,y);
-                        if(field != null && field.isVisited()){
+                        if(neighbour != null && neighbour.isVisited()){
                             return false;
                         }
                     }

@@ -112,6 +112,13 @@ public class WorldInformation implements IDrawableWorld {
             }
         }
 
+        if(!lastPercept.isBump()){
+            for (DIRECTION dir :
+                    DIRECTION.values()) {
+                fieldData[getCurrX() + dir.xOffset][getCurrY() + dir.yOffset].setCantBeWall();
+            }
+        }
+
         if(lastPercept.isBreeze()){
             fieldData[getCurrX()][getCurrY()].setBreeze();
         }

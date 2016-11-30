@@ -23,6 +23,8 @@ class MyAgent implements IAgentActions, IAgentState {
 
     private AgentAction nextAction = AgentAction.START_GAME;
 
+    private int actionCounter = 0;
+
     private WorldInformation info;
 
     public static void main(String[] args) {
@@ -119,7 +121,14 @@ class MyAgent implements IAgentActions, IAgentState {
     public IAction chooseAction() {
 
         //discover world
-        nextAction = new WorldDiscoverer(info).nextMove();
+        try{
+            nextAction = new WorldDiscoverer(info).nextMove();
+            actionCounter++;
+        }catch(Exception e){
+            System.out.print("Actions: " + actionCounter);
+            nextAction = AgentAction.NO_ACTION;
+        }
+
 
         return nextAction;
     }

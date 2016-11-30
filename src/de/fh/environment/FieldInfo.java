@@ -13,6 +13,7 @@ public class FieldInfo implements IDrawableField {
     private boolean isBreeze = false;
     private boolean isWall = false;
     private boolean canBeWall = false;
+    private boolean cantBeWall = false;
     private boolean visited = false;
 
     public FieldInfo(int x, int y, WorldInformation wi){
@@ -41,23 +42,22 @@ public class FieldInfo implements IDrawableField {
     public boolean canBePit(){
         if(visited) return false;
         boolean canBePit = false;
-        boolean hasBreeze = false;
-        for (DIRECTION direction :
-                DIRECTION.values()) {
-
+        for (DIRECTION direction : DIRECTION.values()) {
             FieldInfo field = worldInformation.getInfo(x + direction.xOffset, y + direction.yOffset);
             if(field == null) continue;
             if(field.isBreeze()){
-                if(!hasBreeze){
                     canBePit = true;
-                    hasBreeze = true;
-                }
-            }
-            if(worldInformation.getInfo(x + direction.xOffset, y + direction.yOffset).isVisited() &&
-                    !worldInformation.getInfo(x + direction.xOffset, y + direction.yOffset).isBreeze()){
-                canBePit = false;
             }
         }
+
+        for (DIRECTION direction : DIRECTION.values()) {
+            FieldInfo field = worldInformation.getInfo(x + direction.xOffset, y + direction.yOffset);
+            if(field == null) continue;
+            if(field.isVisited() && !field.isBreeze()){
+                return false;
+            }
+        }
+
         return canBePit;
     }
 
@@ -71,15 +71,26 @@ public class FieldInfo implements IDrawableField {
 
     public boolean canBeWall() {
         if (visited) return false;
-        return isWall || canBeWall;
+        return !cantBeWall && (isWall || canBeWall);
     }
 
-    public void setCanBeWall(){
-        canBeWall = true;
+    public void setCanBeWall(){canBeWall = true;}
+
+    public void setCantBeWall(){
+        cantBeWall = true;
     }
 
     public void visit(){
         visited = true;
+    }
+
+    public boolean isPit(){
+        for (DIRECTION dir: DIRECTION.values()){
+            if(worldInformation.getInfo(x + dir.xOffset, y + dir.yOffset) != null && !worldInformation.getInfo(x + dir.xOffset, y + dir.yOffset).isBreeze()){
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean isVisited(){
@@ -98,6 +109,9 @@ public class FieldInfo implements IDrawableField {
         if(visited){
             g.setColor(Color.white);
             g.fillRect(0,0,32,32);
+            if(isBreeze()){
+                g.drawImage(WorldVisualizerPane.IMAGE_BREEZE, 0, 0, null);
+            }
             return;
         }
 
@@ -111,6 +125,13 @@ public class FieldInfo implements IDrawableField {
             g.drawImage(WorldVisualizerPane.IMAGE_WALL, 0, 0, null);
             g.drawImage(WorldVisualizerPane.IMAGE_UNKNOWN, 0, 0, null);
             return;
+        }
+
+        if(canBePit()){
+            g.drawImage(WorldVisualizerPane.IMAGE_PIT, 0, 0, null);
+            if(isPit()){
+                return;
+            }
         }
 
         g.drawImage(WorldVisualizerPane.IMAGE_UNKNOWN, 0, 0, null);

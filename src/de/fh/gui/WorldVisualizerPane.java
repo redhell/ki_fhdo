@@ -14,6 +14,8 @@ public class WorldVisualizerPane extends FieldPanel {
     public static Image IMAGE_WALL;
     public static Image IMAGE_GOLD;
     public static Image IMAGE_UNKNOWN;
+    public static Image IMAGE_BREEZE;
+    public static Image IMAGE_PIT;
     //public static Image IMAGE_QUESTION_TRANSPARENT;
 
     WorldVisualizerPane(IDrawableWorld world) {
@@ -92,5 +94,7 @@ public class WorldVisualizerPane extends FieldPanel {
         this.images[1][4] = this.images[0][4].getScaledInstance(16, 16, 1);
         //IMAGE_UNKNOWN = FileIO.readImageExtern(new File(".", "/Daten/Bilder/unknown.png"));
         IMAGE_UNKNOWN = FileIO.readImageExtern(new File(".", "/Daten/Bilder/FragezeichenOhneHintergrund.png"));
+        IMAGE_BREEZE = FileIO.readImageExtern(new File(".", "/Daten/Bilder/Breeze.png"));
+        IMAGE_PIT = FileIO.readImageExtern(new File(".", "/Daten/Bilder/pit.png"));
     }
 }
