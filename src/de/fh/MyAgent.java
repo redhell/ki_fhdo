@@ -24,8 +24,12 @@ class MyAgent implements IAgentActions, IAgentState {
     private AgentAction nextAction = AgentAction.START_GAME;
 
     private int actionCounter = 0;
+    
+    private AgentPercept agPercept;
 
     private WorldInformation info;
+    
+    private Scoreboard sb = new Scoreboard(1000);
 
     public static void main(String[] args) {
         MyAgent ki = new MyAgent();
@@ -80,7 +84,7 @@ class MyAgent implements IAgentActions, IAgentState {
     @Override
     public void updateState(Percept percept, int actionEffect) {
 
-        AgentPercept agPercept = (AgentPercept) percept;
+        agPercept = (AgentPercept) percept;
 
         info.doUpdate(agPercept, nextAction, actionEffect);
 
@@ -90,12 +94,14 @@ class MyAgent implements IAgentActions, IAgentState {
             case ActionEffect.SUCCESS:
                 break;
             case ActionEffect.GOLD_FOUND:
+            	sb.changeScore(100);
                 break;
             case ActionEffect.GOLD_NOT_FOUND:
                 break;
             case ActionEffect.INVALID_LOCATION:
                 break;
             case ActionEffect.WUMPUS_KILLED:
+            	sb.changeScore(100);
                 break;
             case ActionEffect.WUMPUS_NOT_KILLED:
                 break;
@@ -119,6 +125,10 @@ class MyAgent implements IAgentActions, IAgentState {
      */
     @Override
     public IAction chooseAction() {
+    	
+    	if(agPercept.isGold()){
+    		return AgentAction.GRAB;
+    	}
 
         //discover world
         try{
@@ -129,7 +139,8 @@ class MyAgent implements IAgentActions, IAgentState {
             nextAction = AgentAction.NO_ACTION;
         }
 
-
+        sb.changeScore(-1);
+        System.out.println(sb.getScore());
         return nextAction;
     }
 }
