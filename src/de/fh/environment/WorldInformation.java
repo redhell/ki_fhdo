@@ -122,6 +122,10 @@ public class WorldInformation implements IDrawableWorld {
         if(lastPercept.isBreeze()){
             fieldData[getCurrX()][getCurrY()].setBreeze();
         }
+        
+        if(lastPercept.isStench() && lastPercept.getWumpusStenchRadar()[0][1]<2){
+        	fieldData[getCurrX()][getCurrY()].setStench();
+        }
     }
 
     /***

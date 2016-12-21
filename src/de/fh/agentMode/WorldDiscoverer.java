@@ -27,8 +27,9 @@ public class WorldDiscoverer extends AgentMode {
                 if(pos.getX() == 0 && pos.getY() == 0) return false;
                 FieldInfo info = worldInformation.getInfo(pos);
                 if(info != null){
-                    if(info.isWall())return false;
+                    if(info.isWall()) return false;
                     if(info.canBePit()) return false;
+                    if(info.canBeWumpus()) return false;
                 }
                 return true;
             }
@@ -41,7 +42,7 @@ public class WorldDiscoverer extends AgentMode {
 
                     FieldInfo neighbour = worldInformation.getInfo(x,y);
                     if(neighbour != null){
-                        if((worldInformation.getInfo(info) == null || !worldInformation.getInfo(info).isVisited())  && neighbour.canBePit()){
+                        if((worldInformation.getInfo(info) == null || !worldInformation.getInfo(info).isVisited())  && neighbour.canBePit() && neighbour.canBeWumpus()){
                             return true;
                         }
                     }
