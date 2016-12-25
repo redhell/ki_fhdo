@@ -2,6 +2,7 @@ package de.fh.environment;
 
 import de.fh.gui.IDrawableField;
 import de.fh.gui.WorldVisualizerPane;
+import de.fh.search.Position;
 import de.fh.util.DIRECTION;
 
 import java.awt.*;
@@ -12,7 +13,6 @@ public class FieldInfo implements IDrawableField {
     private int y;
     private boolean isBreeze = false;
     private boolean isWall = false;
-    private boolean isStench = false;
     private boolean canBeWall = false;
     private boolean cantBeWall = false;
     private boolean visited = false;
@@ -30,14 +30,6 @@ public class FieldInfo implements IDrawableField {
 
     public void setBreeze(){
         this.isBreeze = true;
-    }
-    
-    public boolean isStench(){
-    	return isStench;
-    }
-    
-    public void setStench(){
-    	this.isStench = true;
     }
 
     public int getX() {
@@ -71,25 +63,8 @@ public class FieldInfo implements IDrawableField {
     }
     
     public boolean canBeWumpus(){
-        if(visited) return false;
-        boolean canBeWumpus = false;
-        for (DIRECTION direction : DIRECTION.values()) {
-            FieldInfo field = worldInformation.getInfo(x + direction.xOffset, y + direction.yOffset);
-            if(field == null) continue;
-            if(field.isStench){
-                    canBeWumpus = true;
-            }
-        }
 
-        for (DIRECTION direction : DIRECTION.values()) {
-            FieldInfo field = worldInformation.getInfo(x + direction.xOffset, y + direction.yOffset);
-            if(field == null) continue;
-            if(field.isVisited() && !field.isStench()){
-                return false;
-            }
-        }
-
-        return canBeWumpus;
+        return worldInformation.canBeWumpus(new Position(x,y));
     }
 
     public void setWall(){
@@ -123,26 +98,31 @@ public class FieldInfo implements IDrawableField {
         }
         return true;
     }
-    
-    public boolean isWumpus(){
-        for (DIRECTION dir: DIRECTION.values()){
-            if(worldInformation.getInfo(x + dir.xOffset, y + dir.yOffset) != null && !worldInformation.getInfo(x + dir.xOffset, y + dir.yOffset).isStench()){
-                return false;
-            }
-        }
-        return true;
-    }
 
     public boolean isVisited(){
         return visited;
     }
 
+    public int calculateDistanceTo(Position pos){
+        return new Position(x, y).calculateDistanceTo(pos);
+    }
 
     @Override
     public void drawField(Graphics g) {
         if(worldInformation.getCurrX() == x && worldInformation.getCurrY() == y){
             g.setColor(Color.blue);
             g.fillRect(4,4,24,24);
+            return;
+        }
+
+        if(isWall()){
+            g.drawImage(WorldVisualizerPane.IMAGE_WALL, 0, 0, null);
+            return;
+        }
+
+        if(canBeWumpus()){
+            g.drawImage(WorldVisualizerPane.IMAGE_WUMPUS, 0, 0, null);
+            g.drawImage(WorldVisualizerPane.IMAGE_UNKNOWN, 0, 0, null);
             return;
         }
 
@@ -156,10 +136,7 @@ public class FieldInfo implements IDrawableField {
         }
 
 
-        if(isWall()){
-            g.drawImage(WorldVisualizerPane.IMAGE_WALL, 0, 0, null);
-            return;
-        }
+
 
         if(canBeWall()){
             g.drawImage(WorldVisualizerPane.IMAGE_WALL, 0, 0, null);
@@ -173,12 +150,10 @@ public class FieldInfo implements IDrawableField {
                 return;
             }
         }
-        
+
         if(canBeWumpus()){
-        	g.drawImage(WorldVisualizerPane.IMAGE_WUMPUS, 0, 0, null);
-        	if(isWumpus()){
-        		return;
-        	}
+            g.drawImage(WorldVisualizerPane.IMAGE_WUMPUS, 0, 0, null);
+            g.drawImage(WorldVisualizerPane.IMAGE_UNKNOWN, 0, 0, null);
         }
 
         g.drawImage(WorldVisualizerPane.IMAGE_UNKNOWN, 0, 0, null);

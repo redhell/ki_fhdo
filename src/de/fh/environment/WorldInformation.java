@@ -38,6 +38,8 @@ public class WorldInformation implements IDrawableWorld {
     private AgentAction lastAction;
     private int lastActionEffect;
 
+    private WumpusTracker wumpusTracker = new WumpusTracker(this);
+
     public WorldInformation(){
         this.maxX = 3;
         this.maxY = 3;
@@ -122,10 +124,17 @@ public class WorldInformation implements IDrawableWorld {
         if(lastPercept.isBreeze()){
             fieldData[getCurrX()][getCurrY()].setBreeze();
         }
-        
-        if(lastPercept.isStench() && lastPercept.getWumpusStenchRadar()[0][1]<2){
-        	fieldData[getCurrX()][getCurrY()].setStench();
+
+        //CHECK WUMPUS
+        if(lastPercept.isRumble()){
+            wumpusTracker.expand();
         }
+        for (int i = 0; i<100; i++){
+            if(lastPercept.getWumpusStenchRadar()[i][0] != 0){
+                wumpusTracker.updateWumpus(lastPercept.getWumpusStenchRadar()[i][0], lastPercept.getWumpusStenchRadar()[i][1]);
+            }
+        }
+        wumpusTracker.finishRound();
     }
 
     /***
@@ -207,6 +216,10 @@ public class WorldInformation implements IDrawableWorld {
         if(gui != null){
             gui.doUpdate();
         }
+    }
+
+    public boolean canBeWumpus(Position pos){
+        return wumpusTracker.canBeWumpus(pos);
     }
 
     public FieldInfo getInfo(Position coordiante) {

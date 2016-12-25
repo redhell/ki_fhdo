@@ -11,6 +11,13 @@ public class Position {
         this.y = y;
     }
 
+    public int calculateDistanceTo(Position position){
+        int distance = 0;
+        distance += Math.abs(position.getX() - x);
+        distance +=Math.abs(position.getY() - y);
+        return distance;
+    }
+
     public int getX() {
         return x;
     }
