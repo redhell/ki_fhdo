@@ -125,11 +125,11 @@ class MyAgent implements IAgentActions, IAgentState {
     @Override
     public IAction chooseAction() {
     	
-    	/*if(agPercept.isGold()){
+    	if(agPercept.isGold()){
     		sb.changeScore(100);
-    		nextAction = AgentAction.SHOOT;
+    		nextAction = AgentAction.GRAB;
     		return nextAction;
-    	}*/
+    	}
 
         //discover world
         try{
