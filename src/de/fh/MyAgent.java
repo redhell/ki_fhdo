@@ -94,7 +94,6 @@ class MyAgent implements IAgentActions, IAgentState {
             case ActionEffect.SUCCESS:
                 break;
             case ActionEffect.GOLD_FOUND:
-            	sb.changeScore(100);
                 break;
             case ActionEffect.GOLD_NOT_FOUND:
                 break;
@@ -126,9 +125,11 @@ class MyAgent implements IAgentActions, IAgentState {
     @Override
     public IAction chooseAction() {
     	
-    	if(agPercept.isGold()){
-    		return AgentAction.GRAB;
-    	}
+    	/*if(agPercept.isGold()){
+    		sb.changeScore(100);
+    		nextAction = AgentAction.SHOOT;
+    		return nextAction;
+    	}*/
 
         //discover world
         try{

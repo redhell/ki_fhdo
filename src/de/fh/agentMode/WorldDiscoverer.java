@@ -36,13 +36,16 @@ public class WorldDiscoverer extends AgentMode {
 
             @Override
             public boolean isTarget(Position info) {
+            	FieldInfo field = worldInformation.getInfo(info);
+            	if(field!=null && (field.isPit() || field.isWumpus() || field.isVisited()))
+            		return false;
                 for (DIRECTION dir: DIRECTION.values()) {
                     int x = info.getX() + dir.xOffset;
                     int y = info.getY() + dir.yOffset;
 
                     FieldInfo neighbour = worldInformation.getInfo(x,y);
                     if(neighbour != null){
-                        if((worldInformation.getInfo(info) == null || !worldInformation.getInfo(info).isVisited())  && neighbour.canBePit() && neighbour.canBeWumpus()){
+                        if(worldInformation.getInfo(info) == null || !worldInformation.getInfo(info).isVisited() || neighbour.canBePit() || neighbour.canBeWumpus()){
                             return true;
                         }
                     }

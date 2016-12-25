@@ -1,0 +1,10 @@
+[13,13]
+Cell[2,3] : P
+Cell[4,12] : P
+Cell[8,7] : W
+Cell[11,2] : P
+Cell[11,11] : P
+Cell[12,12] : O
+Cell[12,13] : O
+Cell[13,12] : O
+Cell[13,13] : G
