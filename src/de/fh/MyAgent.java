@@ -14,6 +14,7 @@ import de.fh.connection.wumpus.AgentPercept;
 import de.fh.connection.wumpus.AgentStartInfo;
 import de.fh.environment.WorldInformation;
 import de.fh.gui.WorldVisualizer;
+import de.fh.util.Position;
 
 //TODO: Zu spät ....
 /*
@@ -149,20 +150,31 @@ class MyAgent implements IAgentActions, IAgentState {
         try{
             nextAction = new WorldDiscoverer(info).nextMove();
         }catch(Exception e){
-            nextAction = AgentAction.NO_ACTION;
-            // Zurück zum Start +100 Pt.
-            if(info.getCurrX() != info.getCurrY()) {
-            	info.setGoHome();
-            } else {
-            	sb.changeScore(100);
-            	nextAction = AgentAction.EXIT_TRIAL;
-            } 
+            if(info.getWumpusTracker().getFirstWumpus() == null){
+                nextAction = AgentAction.NO_ACTION;
+                // Zurück zum Start +100 Pt.
+                if(!info.getPosition().equals(new Position(1,1))) {
+                    info.setGoHome();
+                } else {
+                    sb.changeScore(100);
+                    nextAction = AgentAction.EXIT_TRIAL;
+                }
+            }else{
+                info.getWumpusTracker().clear();
+            }
+
+
+
         }
    
         
         sb.changeScore(-1);
         System.out.println(sb.getScore());
         actionCounter++;
+        if(nextAction == null){
+            System.out.println("Uppss");
+            return chooseAction();
+        }
         return nextAction;
     }
 }

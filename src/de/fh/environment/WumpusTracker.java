@@ -20,6 +20,10 @@ public class WumpusTracker {
         }
     }
 
+    public void clear(){
+        wumpis.clear();
+    }
+
     public boolean canBeWumpus(Position pos){
         for (WumpusInfo info : wumpis.values()){
             if(info.canBeWumpus(pos)){

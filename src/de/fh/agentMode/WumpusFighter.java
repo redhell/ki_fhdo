@@ -9,6 +9,8 @@ import de.fh.search.UCS;
 import de.fh.util.DIRECTION;
 import de.fh.util.Position;
 
+import java.util.HashSet;
+
 public class WumpusFighter extends AgentMode{
     private WorldInformation worldInformation;
     private WumpusInfo currentTarget;
@@ -81,6 +83,12 @@ public class WumpusFighter extends AgentMode{
             @Override
             public boolean isVisitable(Position pos) {
                 if(pos.getX() == 0 && pos.getY() == 0) return false;
+                /*for(DIRECTION direction : DIRECTION.values()){
+                    Position neighbour = pos.getNewPosition(direction);
+                    if(worldInformation.canBeWumpus(neighbour)){
+                        return false;
+                    }
+                }*/
                 FieldInfo info = worldInformation.getInfo(pos);
                 if(info != null){
                     if(info.isWall()) return false;
@@ -103,49 +111,60 @@ public class WumpusFighter extends AgentMode{
 
 
     private AgentAction optimizeLocation(){
-        currentTarget = worldInformation.getWumpusTracker().getFirstWumpus();
-        DIRECTION currentDir = worldInformation.getDir();
-        DIRECTION[] possibleDirections = {currentDir, DIRECTION.turnLeft(currentDir), DIRECTION.turnRight(currentDir)};
-        for (int i = 0; i< possibleDirections.length; i++){
-            if(new LocalisationMove(worldInformation.getPosition().getNewPosition(possibleDirections[i])).isPossible()){
-                switch (i){
-                    case 0:
-                        return AgentAction.GO_FORWARD;
-                    case 1:
-                        return AgentAction.TURN_LEFT;
-                    case 2:
-                        return AgentAction.TURN_RIGHT;
+        UCS optimizer = new UCS(worldInformation, new TargetValidator() {
+            @Override
+            public boolean isVisitable(Position pos) {
+                if(pos.getX() == 0 && pos.getY() == 0) return false;
+                /*for(DIRECTION direction : DIRECTION.values()){
+                    Position neighbour = pos.getNewPosition(direction);
+                    if(worldInformation.canBeWumpus(neighbour)){
+                        return false;
+                    }
+                }*/
+                FieldInfo info = worldInformation.getInfo(pos);
+                if(info != null){
+                    if(info.isWall()) return false;
+                    if(info.canBePit()) return false;
+                    if(info.canBeWumpus()) return false;
                 }
+                return true;
             }
+
+            @Override
+            public boolean isTarget(Position info, DIRECTION dir) {
+                return new LocalisationMove(info).isPossible();
+            }
+        });
+
+
+        try {
+            return optimizer.getNextActions().peek();
+        }catch (Exception e){
+            System.out.println("No optimization found.");
+            return null;
         }
-        return null;
+
     }
 
     public class LocalisationMove{
-        public int less = 0;
-        public int more = 0;
+        private HashSet<Integer> strenthList = new HashSet<>();
         private Position newPos;
 
         public LocalisationMove(Position newPos){
             this.newPos = newPos;
             Position[] possible = currentTarget.getPossiblePositions();
             for(Position pos : possible){
-                if(newPos.calculateDistanceTo(pos) < worldInformation.getPosition().calculateDistanceTo(pos)){
-                    less++;
-                }else if(newPos.calculateDistanceTo(pos) > worldInformation.getPosition().calculateDistanceTo(pos)){
-                    more++;
-                }
+                strenthList.add(newPos.calculateDistanceTo(pos));
             }
         }
 
         public boolean isPossible(){
             FieldInfo info = worldInformation.getInfo(newPos);
-            if(info.canBeWumpus() || info.isWall() || info.canBePit()){
+            if(info != null &&(info.canBeWumpus() || info.isWall() || info.canBePit())){
                 return false;
             }
 
-            return less > 0 && more > 0;
-
+            return strenthList.size()>1;
         }
     }
 

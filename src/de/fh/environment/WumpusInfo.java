@@ -1,12 +1,11 @@
 package de.fh.environment;
 
-import de.fh.util.Position;
+import de.fh.connection.wumpus.AgentAction;
 import de.fh.util.DIRECTION;
-import javafx.geometry.Pos;
+import de.fh.util.Position;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 public class WumpusInfo {
     private HashSet<Position> possiblePositions = new HashSet<>();
@@ -37,6 +36,10 @@ public class WumpusInfo {
     }
 
     private boolean isFieldBehindAgent(Position position){
+        if(information.getPositionHistory().size() > 0 && !information.getPositionHistory().peek().equals(AgentAction.GO_FORWARD)){
+            return false;
+        }
+
         DIRECTION currentAgentDirection = information.getDir();
         Position currentPosition = information.getPosition();
         if(currentAgentDirection.xOffset == 0 && position.getY() == currentPosition.getY()){
