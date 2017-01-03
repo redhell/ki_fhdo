@@ -9,10 +9,13 @@ import de.fh.connection.wumpus.AgentAction;
 import de.fh.connection.wumpus.AgentPercept;
 import de.fh.util.Position;
 
+import java.util.Stack;
+
 public class WorldInformation implements IDrawableWorld {
     private WorldVisualizerPane gui;
-
     private FieldInfo[][] fieldData = new FieldInfo[3][3];
+
+    private Stack<Position> positionHistory = new Stack<>();
 
     /***
      * Current max map dimension
@@ -148,6 +151,10 @@ public class WorldInformation implements IDrawableWorld {
         }
     }
 
+    public Stack<Position> getPositionHistory(){
+        return positionHistory;
+    }
+
     /***
      * updates position data after move
      */
@@ -163,6 +170,7 @@ public class WorldInformation implements IDrawableWorld {
             if (lastActionEffect == ActionEffect.INVALID_LOCATION) {
                 fieldData[getCurrX() + dir.xOffset][getCurrY() + dir.yOffset].setWall();
             } else {
+                positionHistory.push(new Position(pos));
                 pos.move(dir);
             }
 
@@ -216,6 +224,10 @@ public class WorldInformation implements IDrawableWorld {
         if(gui != null){
             gui.doUpdate();
         }
+    }
+
+    public WumpusTracker getWumpusTracker(){
+        return wumpusTracker;
     }
 
     public boolean canBeWumpus(Position pos){

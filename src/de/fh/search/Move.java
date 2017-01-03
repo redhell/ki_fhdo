@@ -16,7 +16,7 @@ public class Move implements Comparable<Move>{
     private Position currentPos;
     private DIRECTION currentDir;
 
-    Move(Move parent, AgentAction agentAction, Position pos, DIRECTION dir){
+    public Move(Move parent, AgentAction agentAction, Position pos, DIRECTION dir){
         this.parent = parent;
         if(parent == null){
             cost = 1;

@@ -4,6 +4,7 @@ import de.fh.agentI.IAction;
 import de.fh.agentI.IAgentActions;
 import de.fh.agentI.IAgentState;
 import de.fh.agentMode.WorldDiscoverer;
+import de.fh.agentMode.WumpusFighter;
 import de.fh.connection.ActionEffect;
 import de.fh.connection.Percept;
 import de.fh.connection.StartInfo;
@@ -30,6 +31,8 @@ class MyAgent implements IAgentActions, IAgentState {
     private WorldInformation info;
     
     private Scoreboard sb = new Scoreboard(1000);
+
+    private int lastWumpusId = 0;
 
     public static void main(String[] args) {
         MyAgent ki = new MyAgent();
@@ -101,6 +104,7 @@ class MyAgent implements IAgentActions, IAgentState {
                 break;
             case ActionEffect.WUMPUS_KILLED:
             	sb.changeScore(100);
+            	info.getWumpusTracker().wumpusKilled(lastWumpusId);
                 break;
             case ActionEffect.WUMPUS_NOT_KILLED:
                 break;
@@ -131,17 +135,27 @@ class MyAgent implements IAgentActions, IAgentState {
     		return nextAction;
     	}
 
+    	//Fight
+        WumpusFighter fighter = new WumpusFighter(info);
+        nextAction = fighter.nextMove();
+        if(nextAction == AgentAction.SHOOT){
+            lastWumpusId = fighter.getCurrentTarget().getId();
+        }
+
+        if(nextAction != null){
+            return nextAction;
+        }
+
         //discover world
         try{
             nextAction = new WorldDiscoverer(info).nextMove();
-            actionCounter++;
         }catch(Exception e){
-            System.out.print("Actions: " + actionCounter);
             nextAction = AgentAction.NO_ACTION;
         }
 
         sb.changeScore(-1);
         System.out.println(sb.getScore());
+        actionCounter++;
         return nextAction;
     }
 }

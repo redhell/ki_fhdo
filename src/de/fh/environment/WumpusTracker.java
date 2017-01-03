@@ -40,4 +40,15 @@ public class WumpusTracker {
             info.finishRound();
         }
     }
+
+    public WumpusInfo getFirstWumpus(){
+        if(wumpis.size()>0){
+            return wumpis.values().iterator().next();
+        }
+        return null;
+    }
+
+    public void wumpusKilled(int id){
+        wumpis.remove(id);
+    }
 }

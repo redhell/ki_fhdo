@@ -55,18 +55,43 @@ public class UCS {
         tmp = new Move(parent, AgentAction.TURN_RIGHT, parent.getPos(), DIRECTION.turnRight(parent.getDir()));
         tmp = new Move(tmp, AgentAction.GO_FORWARD, parent.getPos().getNewPosition(tmp.getDir()), tmp.getDir());
         addMove(tmp);
-
     }
+
 
     public Stack<AgentAction> getNextActions(){
         return search().getActionToThis();
     }
 
     public Move search(){
+        if(validator.isTarget(information.getPosition(),information.getDir())){
+            return null;
+        }
+
+        if(validator.isTarget(information.getPosition(),DIRECTION.turnLeft(information.getDir()))){
+            return new Move(null, AgentAction.TURN_LEFT, information.getPosition(),DIRECTION.turnLeft(information.getDir()));
+        }
+
+        if(validator.isTarget(information.getPosition(),DIRECTION.turnRight(information.getDir()))){
+            return new Move(null, AgentAction.TURN_RIGHT, information.getPosition(),DIRECTION.turnRight(information.getDir()));
+        }
+        if(validator.isTarget(information.getPosition(),DIRECTION.turnLeft(DIRECTION.turnLeft(information.getDir())))){
+            return new Move(null, AgentAction.TURN_LEFT, information.getPosition(),DIRECTION.turnLeft(information.getDir()));
+        }
+
         initialAdd();
         while (!moves.isEmpty()){
             Move elem = moves.poll();
-            if(validator.isTarget(elem.getPos())){
+            if(validator.isTarget(elem.getPos(),elem.getDir())) {
+                return elem;
+            }else if(validator.isTarget(elem.getPos(),DIRECTION.turnLeft(elem.getDir()))){
+                addMove(new Move(elem, AgentAction.TURN_LEFT, elem.getPos(), DIRECTION.turnLeft(elem.getDir())));
+                return elem;
+            }else if(validator.isTarget(elem.getPos(),DIRECTION.turnRight(elem.getDir()))) {
+                addMove(new Move(elem, AgentAction.TURN_RIGHT, elem.getPos(), DIRECTION.turnRight(elem.getDir())));
+                return elem;
+            }else if(validator.isTarget(elem.getPos(),DIRECTION.turnRight(DIRECTION.turnRight(elem.getDir())))){
+                Move tmp = new Move(elem, AgentAction.TURN_RIGHT, elem.getPos(), DIRECTION.turnRight(elem.getDir()));
+                addMove(new Move(tmp, AgentAction.TURN_RIGHT, tmp.getPos(), DIRECTION.turnRight(tmp.getDir())));
                 return elem;
             }else{
                 expandMove(elem);

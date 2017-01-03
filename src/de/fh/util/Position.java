@@ -9,6 +9,11 @@ public class Position {
         this.y = y;
     }
 
+    public Position(Position pos){
+        this.x = pos.x;
+        this.y = pos.y;
+    }
+
     public int calculateDistanceTo(Position position){
         int distance = 0;
         distance += Math.abs(position.getX() - x);

@@ -35,7 +35,7 @@ public class WorldDiscoverer extends AgentMode {
             }
 
             @Override
-            public boolean isTarget(Position info) {
+            public boolean isTarget(Position info, DIRECTION direction) {
             	FieldInfo field = worldInformation.getInfo(info);
             	//TODO: WUmpus? || field.isWumpus()
             	if(field!=null && (field.isPit() || field.isVisited() || field.canBeWumpus()))

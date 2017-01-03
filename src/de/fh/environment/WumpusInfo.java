@@ -2,29 +2,54 @@ package de.fh.environment;
 
 import de.fh.util.Position;
 import de.fh.util.DIRECTION;
+import javafx.geometry.Pos;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 public class WumpusInfo {
     private HashSet<Position> possiblePositions = new HashSet<>();
     private WorldInformation information;
     private int id;
+    private int lastStrength;
     private boolean updatedThisRound = false;
 
 
     public WumpusInfo(int id, WorldInformation info, int strength){
         this.id = id;
         information = info;
-        Position current = info.getPosition();
+        init(strength);
+
+    }
+
+    private void init(int strength){
+        lastStrength = strength;
+        Position current = information.getPosition();
         for(int x = current.getX() - strength; x <= current.getX() + strength; x++){
             for (int y = current.getY() - strength; y <= current.getY() + strength; y++){
-                if(current.calculateDistanceTo(new Position(x,y)) == strength){
+                if(current.calculateDistanceTo(new Position(x,y)) == strength && !isFieldBehindAgent(new Position(x,y))){
                     addField(new Position(x,y));
                 }
             }
         }
         updatedThisRound = true;
+    }
+
+    private boolean isFieldBehindAgent(Position position){
+        DIRECTION currentAgentDirection = information.getDir();
+        Position currentPosition = information.getPosition();
+        if(currentAgentDirection.xOffset == 0 && position.getY() == currentPosition.getY()){
+            return false;
+        }
+        if(currentAgentDirection.yOffset == 0 && position.getX() == currentPosition.getX()){
+            return false;
+        }
+
+        if(position.getNewPosition(currentAgentDirection).calculateDistanceTo(currentPosition)<position.calculateDistanceTo(currentPosition)){
+            return true;
+        }
+        return false;
     }
 
     private void addField(Position pos){
@@ -51,6 +76,12 @@ public class WumpusInfo {
     }
 
     public void updateStrength(int strength){
+        lastStrength = strength;
+        if(possiblePositions.size() == 0){
+            init(strength);
+            return;
+        }
+
         Position current = information.getPosition();
         Iterator<Position> iter = possiblePositions.iterator();
         while (iter.hasNext()){
@@ -92,5 +123,13 @@ public class WumpusInfo {
             }
         }
         updatedThisRound = false;
+    }
+
+    public Position[] getPossiblePositions(){
+        return possiblePositions.toArray(new Position[possiblePositions.size()]);
+    }
+
+    public int getLastStrength(){
+        return lastStrength;
     }
 }
