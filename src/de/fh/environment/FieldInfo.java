@@ -2,7 +2,7 @@ package de.fh.environment;
 
 import de.fh.gui.IDrawableField;
 import de.fh.gui.WorldVisualizerPane;
-import de.fh.search.Position;
+import de.fh.util.Position;
 import de.fh.util.DIRECTION;
 
 import java.awt.*;

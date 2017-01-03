@@ -4,7 +4,7 @@ import de.fh.util.DIRECTION;
 import de.fh.environment.FieldInfo;
 import de.fh.environment.WorldInformation;
 import de.fh.connection.wumpus.AgentAction;
-import de.fh.search.Position;
+import de.fh.util.Position;
 import de.fh.search.TargetValidator;
 import de.fh.search.UCS;
 

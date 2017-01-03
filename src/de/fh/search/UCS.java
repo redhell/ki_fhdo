@@ -3,6 +3,7 @@ package de.fh.search;
 import de.fh.util.DIRECTION;
 import de.fh.environment.WorldInformation;
 import de.fh.connection.wumpus.AgentAction;
+import de.fh.util.Position;
 
 import java.util.HashSet;
 import java.util.PriorityQueue;

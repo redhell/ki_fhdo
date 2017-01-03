@@ -7,7 +7,7 @@ import de.fh.gui.WorldVisualizerPane;
 import de.fh.connection.ActionEffect;
 import de.fh.connection.wumpus.AgentAction;
 import de.fh.connection.wumpus.AgentPercept;
-import de.fh.search.Position;
+import de.fh.util.Position;
 
 public class WorldInformation implements IDrawableWorld {
     private WorldVisualizerPane gui;

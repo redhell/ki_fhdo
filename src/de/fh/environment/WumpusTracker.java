@@ -1,6 +1,6 @@
 package de.fh.environment;
 
-import de.fh.search.Position;
+import de.fh.util.Position;
 
 import java.util.HashMap;
 

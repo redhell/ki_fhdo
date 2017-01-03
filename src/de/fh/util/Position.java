@@ -1,6 +1,4 @@
-package de.fh.search;
-
-import de.fh.util.DIRECTION;
+package de.fh.util;
 
 public class Position {
     private int x;
