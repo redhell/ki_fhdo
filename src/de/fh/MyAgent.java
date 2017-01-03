@@ -39,8 +39,7 @@ class MyAgent implements IAgentActions, IAgentState {
         // Client connect to the server with given predefined settings
 
         WumpusClientConnector wumpusClient = new WumpusClientConnector(ki, ki);
-        wumpusClient.run();
-    }
+        wumpusClient.run();    }
 
     /**
      * Diese Funktion wird einmal aufgerufen und übergibt
@@ -151,8 +150,16 @@ class MyAgent implements IAgentActions, IAgentState {
             nextAction = new WorldDiscoverer(info).nextMove();
         }catch(Exception e){
             nextAction = AgentAction.NO_ACTION;
+            // Zurück zum Start +100 Pt.
+            if(info.getCurrX() != info.getCurrY()) {
+            	info.setGoHome();
+            } else {
+            	sb.changeScore(100);
+            	nextAction = AgentAction.EXIT_TRIAL;
+            } 
         }
-
+   
+        
         sb.changeScore(-1);
         System.out.println(sb.getScore());
         actionCounter++;

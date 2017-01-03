@@ -237,4 +237,10 @@ public class WorldInformation implements IDrawableWorld {
     public FieldInfo getInfo(Position coordiante) {
         return getInfo(coordiante.getX(), coordiante.getY());
     }
+    /**
+     * Go Home Agent (1;1)
+     */
+    public void setGoHome() { 
+    	fieldData[1][1] = new FieldInfo(1,1,this);
+    }
 }
