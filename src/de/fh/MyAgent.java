@@ -35,6 +35,10 @@ class MyAgent implements IAgentActions, IAgentState {
 
     private int lastWumpusId = 0;
 
+    private boolean goldFound = false;
+
+    private int arrowsShoot = 0;
+
     public static void main(String[] args) {
         MyAgent ki = new MyAgent();
         // Client connect to the server with given predefined settings
@@ -131,6 +135,7 @@ class MyAgent implements IAgentActions, IAgentState {
     	
     	if(agPercept.isGold()){
     		sb.changeScore(100);
+    		goldFound = true;
     		nextAction = AgentAction.GRAB;
     		return nextAction;
     	}
@@ -140,6 +145,7 @@ class MyAgent implements IAgentActions, IAgentState {
         nextAction = fighter.nextMove();
         if(nextAction == AgentAction.SHOOT){
             lastWumpusId = fighter.getCurrentTarget().getId();
+            arrowsShoot++;
         }
 
         if(nextAction != null){
@@ -158,6 +164,7 @@ class MyAgent implements IAgentActions, IAgentState {
                 } else {
                     sb.changeScore(100);
                     nextAction = AgentAction.EXIT_TRIAL;
+                    endInfo();
                 }
             }else{
                 info.getWumpusTracker().clear();
@@ -172,9 +179,17 @@ class MyAgent implements IAgentActions, IAgentState {
         System.out.println(sb.getScore());
         actionCounter++;
         if(nextAction == null){
-            System.out.println("Uppss");
             return chooseAction();
         }
         return nextAction;
+    }
+
+    private void endInfo() {
+        System.out.println("#####################################################");
+        System.out.println("Ich hoffe ich habe die Map gut geschafft! :)");
+        System.out.println("Restpunktzahl: " + sb.getScore());
+        System.out.println("Das Gold habe ich " + (goldFound ? "gefunden." : "nicht gefunden."));
+        System.out.println("Pfeile verschossen: " + arrowsShoot);
+        System.out.println("#####################################################");
     }
 }

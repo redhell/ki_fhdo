@@ -83,12 +83,12 @@ public class WumpusFighter extends AgentMode{
             @Override
             public boolean isVisitable(Position pos) {
                 if(pos.getX() == 0 && pos.getY() == 0) return false;
-                /*for(DIRECTION direction : DIRECTION.values()){
+                for(DIRECTION direction : DIRECTION.values()){
                     Position neighbour = pos.getNewPosition(direction);
                     if(worldInformation.canBeWumpus(neighbour)){
                         return false;
                     }
-                }*/
+                }
                 FieldInfo info = worldInformation.getInfo(pos);
                 if(info != null){
                     if(info.isWall()) return false;
@@ -115,12 +115,12 @@ public class WumpusFighter extends AgentMode{
             @Override
             public boolean isVisitable(Position pos) {
                 if(pos.getX() == 0 && pos.getY() == 0) return false;
-                /*for(DIRECTION direction : DIRECTION.values()){
+                for(DIRECTION direction : DIRECTION.values()){
                     Position neighbour = pos.getNewPosition(direction);
                     if(worldInformation.canBeWumpus(neighbour)){
                         return false;
                     }
-                }*/
+                }
                 FieldInfo info = worldInformation.getInfo(pos);
                 if(info != null){
                     if(info.isWall()) return false;
