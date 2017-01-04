@@ -25,6 +25,12 @@ public class WorldDiscoverer extends AgentMode {
             @Override
             public boolean isVisitable(Position position) {
                 if (position.getX() == 0 && position.getY() == 0) return false;
+                for (DIRECTION direction : DIRECTION.values()) {
+                    Position neighbour = position.getNewPosition(direction);
+                    if (worldInformation.canBeWumpus(neighbour)) {
+                        return false;
+                    }
+                }
                 FieldInfo info = worldInformation.getInfo(position);
                 if(info != null){
                     if(info.isWall()) return false;

@@ -1,6 +1,5 @@
 package de.fh.environment;
 
-import de.fh.connection.wumpus.AgentAction;
 import de.fh.util.DIRECTION;
 import de.fh.util.Position;
 
@@ -34,8 +33,8 @@ public class WumpusInfo {
     }
 
     private boolean isFieldBehindAgent(Position position){
-        if (worldInformation.getPositionHistory().size() > 0 && !worldInformation.getPositionHistory().peek().equals(AgentAction.GO_FORWARD)) {
-            return false;
+        if (worldInformation.getPositionHistory().size() > 0 && position.equals(worldInformation.getPositionHistory().peek())) {
+            return true;
         }
 
         DIRECTION currentAgentDirection = worldInformation.getCurrentDirection();

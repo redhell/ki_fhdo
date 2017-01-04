@@ -16,6 +16,7 @@ public class UCS {
     private WorldInformation information;
     private TargetValidator validator;
 
+
     public UCS(WorldInformation info, TargetValidator validator){
         this.information = info;
         this.validator = validator;

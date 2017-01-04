@@ -3,6 +3,7 @@ package de.fh;
 import de.fh.agentI.IAction;
 import de.fh.agentI.IAgentActions;
 import de.fh.agentI.IAgentState;
+import de.fh.agentMode.RandomTarget;
 import de.fh.agentMode.WorldDiscoverer;
 import de.fh.agentMode.WumpusFighter;
 import de.fh.connection.ActionEffect;
@@ -27,11 +28,13 @@ class MyAgent implements IAgentActions, IAgentState {
     private AgentPercept agPercept;
     private WorldInformation info;
 
+
     //Statistics
     private boolean goldFound = false;
     private int arrowsShoot = 0;
     private Scoreboard sb = new Scoreboard(1000);
     private int lastWumpusId = 0;
+    private int wumpusKilled = 0;
 
     public static void main(String[] args) {
         MyAgent ki = new MyAgent();
@@ -103,7 +106,8 @@ class MyAgent implements IAgentActions, IAgentState {
                 break;
             case ActionEffect.WUMPUS_KILLED:
             	sb.changeScore(100);
-            	info.getWumpusTracker().wumpusKilled(lastWumpusId);
+                wumpusKilled++;
+                info.getWumpusTracker().wumpusKilled(lastWumpusId);
                 break;
             case ActionEffect.WUMPUS_NOT_KILLED:
                 break;
@@ -137,44 +141,53 @@ class MyAgent implements IAgentActions, IAgentState {
     	}
 
         //try to calculateFightPosition against wumpus
-        WumpusFighter fighter = new WumpusFighter(info);
-        nextAction = fighter.nextMove();
-        if(nextAction == AgentAction.SHOOT){
-            lastWumpusId = fighter.getCurrentTarget().getId();
-            arrowsShoot++;
+        if (wumpusKilled == 0) {
+            WumpusFighter fighter = new WumpusFighter(info);
+            nextAction = fighter.nextMove();
+            if (nextAction == AgentAction.SHOOT) {
+                lastWumpusId = fighter.getCurrentTarget().getId();
+                arrowsShoot++;
+            }
+            if (nextAction != null) {
+                System.out.println("CALCULATED BY: WumpusFighter");
+                return nextAction;
+            }
         }
-        if(nextAction != null){
-            return nextAction;
-        }
+
 
         //discover world, if no calculateFightPosition is going on
         try{
             nextAction = new WorldDiscoverer(info).nextMove();
         }catch(Exception e){
-            if(info.getWumpusTracker().getFirstWumpus() == null){
+            if (wumpusKilled > 0) {
                 nextAction = AgentAction.NO_ACTION;
                 // Zurück zum Start +100 Pt.
                 if(!info.getPosition().equals(new Position(1,1))) {
                     info.setGoHome();
+                    nextAction = null;
                 } else {
                     sb.changeScore(100);
                     nextAction = AgentAction.EXIT_TRIAL;
                     endInfo();
                 }
             }else{
-                info.getWumpusTracker().clear();
+                info.reinitWumpusTracker();
+                nextAction = null;
             }
-
-
-
         }
 
 
         sb.changeScore(-1);
         System.out.println("Current Score " + sb.getScore());
         if(nextAction == null){
-            return chooseAction();
+            nextAction = new RandomTarget(info).nextMove();
+            if (nextAction == null) {
+                //gibe it up
+                return AgentAction.EXIT_TRIAL;
+            }
+
         }
+        System.out.println("CALCULATED BY: WorldDiscoverer");
         return nextAction;
     }
 

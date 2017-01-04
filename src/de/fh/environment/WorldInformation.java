@@ -246,4 +246,15 @@ public class WorldInformation implements IDrawableWorld {
     public void setGoHome() { 
     	fieldData[1][1] = new FieldInfo(1,1,this);
     }
+
+    public void reinitWumpusTracker() {
+        System.out.println("reinit tracker");
+        wumpusTracker.clear();
+        for (int i = 0; i < 100; i++) {
+            if (lastPercept.getWumpusStenchRadar()[i][0] != 0) {
+                wumpusTracker.updateWumpus(lastPercept.getWumpusStenchRadar()[i][0], lastPercept.getWumpusStenchRadar()[i][1]);
+            }
+        }
+        wumpusTracker.finishRound();
+    }
 }
