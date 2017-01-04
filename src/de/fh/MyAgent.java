@@ -139,9 +139,12 @@ class MyAgent implements IAgentActions, IAgentState {
     		nextAction = AgentAction.GRAB;
     		return nextAction;
     	}
+        
+        sb.changeScore(-1);
 
         //try to calculateFightPosition against wumpus
-        if (wumpusKilled == 0) {
+        //solange weniger Pfeile verschossen wurden als man hat
+        if (wumpusKilled == 0 && arrowsShoot <= calculateArrows()) {
             WumpusFighter fighter = new WumpusFighter(info);
             nextAction = fighter.nextMove();
             if (nextAction == AgentAction.SHOOT) {
@@ -176,8 +179,6 @@ class MyAgent implements IAgentActions, IAgentState {
             }
         }
 
-
-        sb.changeScore(-1);
         System.out.println("Current Score " + sb.getScore());
         if(nextAction == null){
             nextAction = new RandomTarget(info).nextMove();
@@ -201,5 +202,17 @@ class MyAgent implements IAgentActions, IAgentState {
         System.out.println("Das Gold habe ich " + (goldFound ? "gefunden." : "nicht gefunden."));
         System.out.println("Pfeile verschossen: " + arrowsShoot);
         System.out.println("#####################################################");
+    }
+    
+    private int calculateArrows(){
+    	int arrows = 5;
+    	
+    	//Pfeile verdoppeln sich fuer jeden existierenden Wumpus
+    	for(int i = 0; i < agPercept.getWumpusStenchRadar().length; i++){
+    		if(agPercept.getWumpusStenchRadar()[i][0] != 0)
+    			arrows*=2;;
+    	}
+    	
+    	return arrows;
     }
 }
