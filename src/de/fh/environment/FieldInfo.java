@@ -2,8 +2,8 @@ package de.fh.environment;
 
 import de.fh.gui.IDrawableField;
 import de.fh.gui.WorldVisualizerPane;
-import de.fh.util.Position;
 import de.fh.util.DIRECTION;
+import de.fh.util.Position;
 
 import java.awt.*;
 
@@ -76,8 +76,7 @@ public class FieldInfo implements IDrawableField {
     }
 
     public boolean canBeWall() {
-        if (visited) return false;
-        return !cantBeWall && (isWall || canBeWall);
+        return !visited && !cantBeWall && (isWall || canBeWall);
     }
 
     public void setCanBeWall(){canBeWall = true;}
@@ -101,10 +100,6 @@ public class FieldInfo implements IDrawableField {
 
     public boolean isVisited(){
         return visited;
-    }
-
-    public int calculateDistanceTo(Position pos){
-        return new Position(x, y).calculateDistanceTo(pos);
     }
 
     @Override

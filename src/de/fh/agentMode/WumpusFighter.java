@@ -25,17 +25,22 @@ public class WumpusFighter extends AgentMode{
 
     @Override
     public AgentAction nextMove() {
+        //define new target
         if(currentTarget == null){
             currentTarget = worldInformation.getWumpusTracker().getFirstWumpus();
             if(currentTarget == null) return null;
         }
+
+        //locate wumpus until 100% hitchance
         if(currentTarget.getPossiblePositions().length > 1){
             return optimizeLocation();
         }
 
+        //calculate position to shoot wumpus
         try{
-            return fight();
+            return calculateFightPosition();
         }catch (Exception e){
+            //No further position correction, shoot.
             return AgentAction.SHOOT;
         }
     }
@@ -78,18 +83,18 @@ public class WumpusFighter extends AgentMode{
         return false;
     }
 
-    public AgentAction fight(){
+    public AgentAction calculateFightPosition() {
         UCS search = new UCS(worldInformation, new TargetValidator() {
             @Override
-            public boolean isVisitable(Position pos) {
-                if(pos.getX() == 0 && pos.getY() == 0) return false;
+            public boolean isVisitable(Position position) {
+                if (position.getX() == 0 && position.getY() == 0) return false;
                 for(DIRECTION direction : DIRECTION.values()){
-                    Position neighbour = pos.getNewPosition(direction);
+                    Position neighbour = position.getNewPosition(direction);
                     if(worldInformation.canBeWumpus(neighbour)){
                         return false;
                     }
                 }
-                FieldInfo info = worldInformation.getInfo(pos);
+                FieldInfo info = worldInformation.getInfo(position);
                 if(info != null){
                     if(info.isWall()) return false;
                     if(info.canBePit()) return false;
@@ -99,11 +104,8 @@ public class WumpusFighter extends AgentMode{
             }
 
             @Override
-            public boolean isTarget(Position info, DIRECTION direction) {
-                if(isCurrentPositionShootable(info, direction)){
-                    return true;
-                }
-                return false;
+            public boolean isTarget(Position position, DIRECTION direction) {
+                return isCurrentPositionShootable(position, direction);
             }
         });
             return search.getNextActions().pop();
@@ -113,15 +115,15 @@ public class WumpusFighter extends AgentMode{
     private AgentAction optimizeLocation(){
         UCS optimizer = new UCS(worldInformation, new TargetValidator() {
             @Override
-            public boolean isVisitable(Position pos) {
-                if(pos.getX() == 0 && pos.getY() == 0) return false;
+            public boolean isVisitable(Position position) {
+                if (position.getX() == 0 && position.getY() == 0) return false;
                 for(DIRECTION direction : DIRECTION.values()){
-                    Position neighbour = pos.getNewPosition(direction);
+                    Position neighbour = position.getNewPosition(direction);
                     if(worldInformation.canBeWumpus(neighbour)){
                         return false;
                     }
                 }
-                FieldInfo info = worldInformation.getInfo(pos);
+                FieldInfo info = worldInformation.getInfo(position);
                 if(info != null){
                     if(info.isWall()) return false;
                     if(info.canBePit()) return false;
@@ -131,8 +133,8 @@ public class WumpusFighter extends AgentMode{
             }
 
             @Override
-            public boolean isTarget(Position info, DIRECTION dir) {
-                return new LocalisationMove(info).isPossible();
+            public boolean isTarget(Position position, DIRECTION direction) {
+                return new LocalisationMove(position).isPossible();
             }
         });
 
@@ -158,13 +160,10 @@ public class WumpusFighter extends AgentMode{
             }
         }
 
-        public boolean isPossible(){
+        public boolean isPossible() {
             FieldInfo info = worldInformation.getInfo(newPos);
-            if(info != null &&(info.canBeWumpus() || info.isWall() || info.canBePit())){
-                return false;
-            }
+            return !(info != null && (info.canBeWumpus() || info.isWall() || info.canBePit())) && strenthList.size() > 1;
 
-            return strenthList.size()>1;
         }
     }
 

@@ -9,22 +9,20 @@ import java.util.Iterator;
 
 public class WumpusInfo {
     private HashSet<Position> possiblePositions = new HashSet<>();
-    private WorldInformation information;
+    private WorldInformation worldInformation;
     private int id;
-    private int lastStrength;
     private boolean updatedThisRound = false;
 
 
     public WumpusInfo(int id, WorldInformation info, int strength){
         this.id = id;
-        information = info;
+        worldInformation = info;
         init(strength);
 
     }
 
     private void init(int strength){
-        lastStrength = strength;
-        Position current = information.getPosition();
+        Position current = worldInformation.getPosition();
         for(int x = current.getX() - strength; x <= current.getX() + strength; x++){
             for (int y = current.getY() - strength; y <= current.getY() + strength; y++){
                 if(current.calculateDistanceTo(new Position(x,y)) == strength && !isFieldBehindAgent(new Position(x,y))){
@@ -36,12 +34,12 @@ public class WumpusInfo {
     }
 
     private boolean isFieldBehindAgent(Position position){
-        if(information.getPositionHistory().size() > 0 && !information.getPositionHistory().peek().equals(AgentAction.GO_FORWARD)){
+        if (worldInformation.getPositionHistory().size() > 0 && !worldInformation.getPositionHistory().peek().equals(AgentAction.GO_FORWARD)) {
             return false;
         }
 
-        DIRECTION currentAgentDirection = information.getDir();
-        Position currentPosition = information.getPosition();
+        DIRECTION currentAgentDirection = worldInformation.getCurrentDirection();
+        Position currentPosition = worldInformation.getPosition();
         if(currentAgentDirection.xOffset == 0 && position.getY() == currentPosition.getY()){
             return false;
         }
@@ -49,10 +47,7 @@ public class WumpusInfo {
             return false;
         }
 
-        if(position.getNewPosition(currentAgentDirection).calculateDistanceTo(currentPosition)<position.calculateDistanceTo(currentPosition)){
-            return true;
-        }
-        return false;
+        return position.getNewPosition(currentAgentDirection).calculateDistanceTo(currentPosition) < position.calculateDistanceTo(currentPosition);
     }
 
     private void addField(Position pos){
@@ -64,14 +59,10 @@ public class WumpusInfo {
         if(pos.getX() < 1 || pos.getY() < 1){
             return false;
         }
-        FieldInfo info = information.getInfo(pos);
+        FieldInfo info = worldInformation.getInfo(pos);
         if(info == null) return true;
 
-        if(info.isWall() || info.isPit()){
-            return false;
-        }
-
-        return true;
+        return !(info.isWall() || info.isPit());
     }
 
     public int getId(){
@@ -79,17 +70,16 @@ public class WumpusInfo {
     }
 
     public void updateStrength(int strength){
-        lastStrength = strength;
         if(possiblePositions.size() == 0){
             init(strength);
             return;
         }
 
-        Position current = information.getPosition();
+        Position currentPosition = worldInformation.getPosition();
         Iterator<Position> iter = possiblePositions.iterator();
         while (iter.hasNext()){
             Position pos = iter.next();
-            if(current.calculateDistanceTo(pos)!= strength){
+            if (currentPosition.calculateDistanceTo(pos) != strength) {
                 iter.remove();
             }
         }
@@ -97,12 +87,10 @@ public class WumpusInfo {
     }
 
     public void expandPossibilities(){
-        HashSet<Position> tmp = possiblePositions;
+        HashSet<Position> oldPossiblePositions = possiblePositions;
         possiblePositions = new HashSet<>();
-        Iterator<Position> iter = tmp.iterator();
-        while (iter.hasNext()){
-            Position pos = iter.next();
-            for (DIRECTION dir : DIRECTION.values()){
+        for (Position pos : oldPossiblePositions) {
+            for (DIRECTION dir : DIRECTION.values()) {
                 addField(pos.getNewPosition(dir));
             }
             addField(pos);
@@ -116,11 +104,12 @@ public class WumpusInfo {
 
     public void finishRound() {
         if(!updatedThisRound){
-            Position current = information.getPosition();
+            //if wumpus is not in range remove blocks from possiblePositions
+            Position currentPos = worldInformation.getPosition();
             Iterator<Position> iter = possiblePositions.iterator();
             while (iter.hasNext()){
                 Position pos = iter.next();
-                if(current.calculateDistanceTo(pos)< 3){
+                if (currentPos.calculateDistanceTo(pos) <= 3) {
                     iter.remove();
                 }
             }
@@ -130,9 +119,5 @@ public class WumpusInfo {
 
     public Position[] getPossiblePositions(){
         return possiblePositions.toArray(new Position[possiblePositions.size()]);
-    }
-
-    public int getLastStrength(){
-        return lastStrength;
     }
 }

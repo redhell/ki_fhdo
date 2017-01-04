@@ -1,8 +1,8 @@
 package de.fh.search;
 
-import de.fh.util.DIRECTION;
-import de.fh.environment.WorldInformation;
 import de.fh.connection.wumpus.AgentAction;
+import de.fh.environment.WorldInformation;
+import de.fh.util.DIRECTION;
 import de.fh.util.Position;
 
 import java.util.HashSet;
@@ -23,20 +23,20 @@ public class UCS {
 
     private void initialAdd(){
         //forward
-        addMove(new Move(null, AgentAction.GO_FORWARD, information.getPosition().getNewPosition(information.getDir()),information.getDir()));
+        addMove(new Move(null, AgentAction.GO_FORWARD, information.getPosition().getNewPosition(information.getCurrentDirection()), information.getCurrentDirection()));
 
         //left
-        Move tmp = new Move(null, AgentAction.TURN_LEFT, information.getPosition(), DIRECTION.turnLeft(information.getDir()));
+        Move tmp = new Move(null, AgentAction.TURN_LEFT, information.getPosition(), DIRECTION.turnLeft(information.getCurrentDirection()));
         tmp = new Move(tmp, AgentAction.GO_FORWARD, information.getPosition().getNewPosition(tmp.getDir()), tmp.getDir());
         addMove(tmp);
 
         //right
-        tmp = new Move(null, AgentAction.TURN_RIGHT, information.getPosition(), DIRECTION.turnRight(information.getDir()));
+        tmp = new Move(null, AgentAction.TURN_RIGHT, information.getPosition(), DIRECTION.turnRight(information.getCurrentDirection()));
         tmp = new Move(tmp, AgentAction.GO_FORWARD, information.getPosition().getNewPosition(tmp.getDir()), tmp.getDir());
         addMove(tmp);
 
         //back
-        tmp = new Move(null, AgentAction.TURN_RIGHT, information.getPosition(), DIRECTION.turnRight(information.getDir()));
+        tmp = new Move(null, AgentAction.TURN_RIGHT, information.getPosition(), DIRECTION.turnRight(information.getCurrentDirection()));
         tmp = new Move(tmp, AgentAction.TURN_RIGHT, tmp.getPos(), DIRECTION.turnRight(tmp.getDir()));
         tmp = new Move(tmp, AgentAction.GO_FORWARD, tmp.getPos().getNewPosition(tmp.getDir()), tmp.getDir());
         addMove(tmp);
@@ -63,22 +63,24 @@ public class UCS {
     }
 
     public Move search(){
-        if(validator.isTarget(information.getPosition(),information.getDir())){
+        //Check if current Position is target
+        if (validator.isTarget(information.getPosition(), information.getCurrentDirection())) {
             return null;
         }
-
-        if(validator.isTarget(information.getPosition(),DIRECTION.turnLeft(information.getDir()))){
-            return new Move(null, AgentAction.TURN_LEFT, information.getPosition(),DIRECTION.turnLeft(information.getDir()));
+        if (validator.isTarget(information.getPosition(), DIRECTION.turnLeft(information.getCurrentDirection()))) {
+            return new Move(null, AgentAction.TURN_LEFT, information.getPosition(), DIRECTION.turnLeft(information.getCurrentDirection()));
         }
 
-        if(validator.isTarget(information.getPosition(),DIRECTION.turnRight(information.getDir()))){
-            return new Move(null, AgentAction.TURN_RIGHT, information.getPosition(),DIRECTION.turnRight(information.getDir()));
+        if (validator.isTarget(information.getPosition(), DIRECTION.turnRight(information.getCurrentDirection()))) {
+            return new Move(null, AgentAction.TURN_RIGHT, information.getPosition(), DIRECTION.turnRight(information.getCurrentDirection()));
         }
-        if(validator.isTarget(information.getPosition(),DIRECTION.turnLeft(DIRECTION.turnLeft(information.getDir())))){
-            return new Move(null, AgentAction.TURN_LEFT, information.getPosition(),DIRECTION.turnLeft(information.getDir()));
+        if (validator.isTarget(information.getPosition(), DIRECTION.turnLeft(DIRECTION.turnLeft(information.getCurrentDirection())))) {
+            return new Move(null, AgentAction.TURN_LEFT, information.getPosition(), DIRECTION.turnLeft(information.getCurrentDirection()));
         }
 
         initialAdd();
+
+        //Try each position and all Directions
         while (!moves.isEmpty()){
             Move elem = moves.poll();
             if(validator.isTarget(elem.getPos(),elem.getDir())) {

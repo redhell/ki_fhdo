@@ -10,14 +10,13 @@ import java.io.File;
 public class WorldVisualizerPane extends FieldPanel {
 
 
-    private IDrawableWorld world;
     public static Image IMAGE_WALL;
     public static Image IMAGE_GOLD;
     public static Image IMAGE_UNKNOWN;
     public static Image IMAGE_BREEZE;
     public static Image IMAGE_PIT;
     public static Image IMAGE_WUMPUS;
-    //public static Image IMAGE_QUESTION_TRANSPARENT;
+    private IDrawableWorld world;
 
     WorldVisualizerPane(IDrawableWorld world) {
         super(null);
@@ -28,6 +27,9 @@ public class WorldVisualizerPane extends FieldPanel {
         doUpdate();
     }
 
+    /**
+     * Update the gui from world
+     */
     public void doUpdate(){
         this.updateView();
         this.setPreferredSize(new Dimension(world.getMaxX() * 33, world.getMaxY() * 33));
@@ -52,22 +54,6 @@ public class WorldVisualizerPane extends FieldPanel {
         }
     }
 
-    public Image getPitImage() {
-        return this.images[0][2];
-    }
-
-    public Image getWumpustImage() {
-        return this.images[0][3];
-    }
-
-    public Image getMauerImage() {
-        return this.images[0][1];
-    }
-
-    public Image getGoldImage() {
-        return this.images[0][4];
-    }
-
     @Override
     public void initImages() {
         this.images = new Image[2][6];
@@ -80,6 +66,7 @@ public class WorldVisualizerPane extends FieldPanel {
             }
         }
 
+        //Load all Images
         this.images[0][0] = image;
         this.images[0][1] = FileIO.readImageExtern(new File(".", "/Daten/Bilder/mauer.png"));
         IMAGE_WALL = this.images[0][1];
@@ -94,7 +81,6 @@ public class WorldVisualizerPane extends FieldPanel {
         this.images[1][2] = this.images[0][2].getScaledInstance(16, 16, 1);
         this.images[1][3] = this.images[0][3].getScaledInstance(16, 16, 1);
         this.images[1][4] = this.images[0][4].getScaledInstance(16, 16, 1);
-        //IMAGE_UNKNOWN = FileIO.readImageExtern(new File(".", "/Daten/Bilder/unknown.png"));
         IMAGE_UNKNOWN = FileIO.readImageExtern(new File(".", "/Daten/Bilder/FragezeichenOhneHintergrund.png"));
         IMAGE_BREEZE = FileIO.readImageExtern(new File(".", "/Daten/Bilder/Breeze.png"));
         IMAGE_PIT = FileIO.readImageExtern(new File(".", "/Daten/Bilder/pit.png"));

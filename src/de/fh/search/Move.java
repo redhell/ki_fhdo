@@ -1,7 +1,7 @@
 package de.fh.search;
 
-import de.fh.util.DIRECTION;
 import de.fh.connection.wumpus.AgentAction;
+import de.fh.util.DIRECTION;
 import de.fh.util.Position;
 
 import java.util.Stack;
@@ -11,9 +11,21 @@ import java.util.Stack;
  */
 public class Move implements Comparable<Move>{
     private Move parent;
+    /**
+     * Action to get from parent to this move
+     */
     private AgentAction action;
+    /**
+     * Costs until this move
+     */
     private int cost;
+    /**
+     * Position after this move
+     */
     private Position currentPos;
+    /**
+     * Direction after this move
+     */
     private DIRECTION currentDir;
 
     public Move(Move parent, AgentAction agentAction, Position pos, DIRECTION dir){
@@ -43,18 +55,19 @@ public class Move implements Comparable<Move>{
     public AgentAction getAction(){
         return action;
     }
+
     public int getCost(){
         return cost;
     }
 
     public Stack<AgentAction> getActionToThis(){
-        Stack<AgentAction> tmp = new Stack<>();
+        Stack<AgentAction> actionStack = new Stack<>();
         Move curr = this;
         while (curr != null){
-            tmp.add(curr.getAction());
+            actionStack.add(curr.getAction());
             curr = curr.getParent();
         }
-        return tmp;
+        return actionStack;
     }
 
     @Override

@@ -33,12 +33,18 @@ public class WumpusTracker {
         return false;
     }
 
+    /**
+     * expands all possible Positions by 1
+     */
     public void expand(){
         for (WumpusInfo info : wumpis.values()){
             info.expandPossibilities();
         }
     }
 
+    /**
+     * informs all not updated wumpi, that they weren't in range
+     */
     public void finishRound(){
         for (WumpusInfo info : wumpis.values()){
             info.finishRound();
@@ -52,6 +58,9 @@ public class WumpusTracker {
         return null;
     }
 
+    /**
+     * removes wumpus from list
+     */
     public void wumpusKilled(int id){
         wumpis.remove(id);
     }

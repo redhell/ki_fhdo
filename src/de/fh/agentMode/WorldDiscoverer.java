@@ -1,12 +1,12 @@
 package de.fh.agentMode;
 
-import de.fh.util.DIRECTION;
+import de.fh.connection.wumpus.AgentAction;
 import de.fh.environment.FieldInfo;
 import de.fh.environment.WorldInformation;
-import de.fh.connection.wumpus.AgentAction;
-import de.fh.util.Position;
 import de.fh.search.TargetValidator;
 import de.fh.search.UCS;
+import de.fh.util.DIRECTION;
+import de.fh.util.Position;
 
 public class WorldDiscoverer extends AgentMode {
     private WorldInformation worldInformation;
@@ -23,9 +23,9 @@ public class WorldDiscoverer extends AgentMode {
     public AgentAction nextMove() {
         UCS search = new UCS(worldInformation, new TargetValidator() {
             @Override
-            public boolean isVisitable(Position pos) {
-                if(pos.getX() == 0 && pos.getY() == 0) return false;
-                FieldInfo info = worldInformation.getInfo(pos);
+            public boolean isVisitable(Position position) {
+                if (position.getX() == 0 && position.getY() == 0) return false;
+                FieldInfo info = worldInformation.getInfo(position);
                 if(info != null){
                     if(info.isWall()) return false;
                     if(info.canBePit()) return false;
@@ -35,18 +35,18 @@ public class WorldDiscoverer extends AgentMode {
             }
 
             @Override
-            public boolean isTarget(Position info, DIRECTION direction) {
-            	FieldInfo field = worldInformation.getInfo(info);
-            	//TODO: WUmpus? || field.isWumpus()
+            public boolean isTarget(Position position, DIRECTION direction) {
+                FieldInfo field = worldInformation.getInfo(position);
+                //TODO: WUmpus? || field.isWumpus()
             	if(field!=null && (field.isPit() || field.isVisited() || field.canBeWumpus()))
             		return false;
                 for (DIRECTION dir: DIRECTION.values()) {
-                    int x = info.getX() + dir.xOffset;
-                    int y = info.getY() + dir.yOffset;
+                    int x = position.getX() + dir.xOffset;
+                    int y = position.getY() + dir.yOffset;
 
                     FieldInfo neighbour = worldInformation.getInfo(x,y);
                     if(neighbour != null){
-                        if(worldInformation.getInfo(info) == null || !worldInformation.getInfo(info).isVisited() || neighbour.canBePit()){
+                        if (worldInformation.getInfo(position) == null || !worldInformation.getInfo(position).isVisited() || neighbour.canBePit()) {
                             return true;
                         }
                     }
@@ -54,8 +54,8 @@ public class WorldDiscoverer extends AgentMode {
                 for (int i = 1; i< 2; i++){
                     for (DIRECTION dir: DIRECTION.values()) {
 
-                        int x = info.getX() + dir.xOffset * i;
-                        int y = info.getY() + dir.yOffset * i;
+                        int x = position.getX() + dir.xOffset * i;
+                        int y = position.getY() + dir.yOffset * i;
                         FieldInfo neighbour = worldInformation.getInfo(x,y);
 
                         if(neighbour != null && neighbour.isVisited()){

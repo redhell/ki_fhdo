@@ -1,12 +1,12 @@
 package de.fh.environment;
 
-import de.fh.util.DIRECTION;
-import de.fh.gui.IDrawableField;
-import de.fh.gui.IDrawableWorld;
-import de.fh.gui.WorldVisualizerPane;
 import de.fh.connection.ActionEffect;
 import de.fh.connection.wumpus.AgentAction;
 import de.fh.connection.wumpus.AgentPercept;
+import de.fh.gui.IDrawableField;
+import de.fh.gui.IDrawableWorld;
+import de.fh.gui.WorldVisualizerPane;
+import de.fh.util.DIRECTION;
 import de.fh.util.Position;
 
 import java.util.Stack;
@@ -29,54 +29,57 @@ public class WorldInformation implements IDrawableWorld {
     /***
      * Current position of agent
      */
-    private Position pos;
+    private Position currentPos;
 
     /***
      * Current direction of agent
      */
-    private DIRECTION dir = DIRECTION.RIGHT;
+    private DIRECTION currentDirection = DIRECTION.RIGHT;
 
+    /***
+     * Tracks all Wumpi
+     */
+    private WumpusTracker wumpusTracker = new WumpusTracker(this);
 
     private AgentPercept lastPercept;
     private AgentAction lastAction;
     private int lastActionEffect;
 
-    private WumpusTracker wumpusTracker = new WumpusTracker(this);
+
 
     public WorldInformation(){
         this.maxX = 3;
         this.maxY = 3;
-        pos = new Position(1,1);
+        currentPos = new Position(1, 1);
         initField();
-
     }
 
     /***
      * @return current X coordinate of agent
      */
     public int getCurrX() {
-        return pos.getX();
+        return currentPos.getX();
     }
 
     /***
      * @return current Y coordinate of agent
      */
     public int getCurrY() {
-        return pos.getY();
+        return currentPos.getY();
     }
 
     /***
      * @return current position coordinate of agent
      */
     public Position getPosition(){
-        return pos;
+        return currentPos;
     }
 
     /***
      * @return current direction coordinate of agent
      */
-    public DIRECTION getDir(){
-        return dir;
+    public DIRECTION getCurrentDirection() {
+        return currentDirection;
     }
 
     /***
@@ -160,21 +163,21 @@ public class WorldInformation implements IDrawableWorld {
      */
     private void fixPosition(){
         if(lastAction == AgentAction.TURN_RIGHT){
-            dir = DIRECTION.turnRight(dir);
+            currentDirection = DIRECTION.turnRight(currentDirection);
         }
         if(lastAction == AgentAction.TURN_LEFT){
-            dir = DIRECTION.turnLeft(dir);
+            currentDirection = DIRECTION.turnLeft(currentDirection);
         }
 
         if(lastAction == AgentAction.GO_FORWARD) {
             if (lastActionEffect == ActionEffect.INVALID_LOCATION) {
-                fieldData[getCurrX() + dir.xOffset][getCurrY() + dir.yOffset].setWall();
+                fieldData[getCurrX() + currentDirection.xOffset][getCurrY() + currentDirection.yOffset].setWall();
             } else {
-                positionHistory.push(new Position(pos));
-                pos.move(dir);
+                positionHistory.push(new Position(currentPos));
+                currentPos.move(currentDirection);
             }
 
-            if (pos.getX() > maxX - 2) {
+            if (currentPos.getX() > maxX - 2) {
                 maxX++;
                 FieldInfo[][] tmp = fieldData;
                 fieldData = new FieldInfo[maxX][maxY];
@@ -183,7 +186,7 @@ public class WorldInformation implements IDrawableWorld {
                     fieldData[maxX - 1][y] = new FieldInfo(maxX - 1, y, this);
                 }
             }
-            if (pos.getY() > maxY - 2) {
+            if (currentPos.getY() > maxY - 2) {
                 maxY++;
                 FieldInfo[][] tmp = fieldData;
                 fieldData = new FieldInfo[maxX][maxY];
@@ -192,7 +195,7 @@ public class WorldInformation implements IDrawableWorld {
                     fieldData[x][maxY - 1] = new FieldInfo(x, maxY - 1, this);
                 }
             }
-            fieldData[pos.getX()][pos.getY()].visit();
+            fieldData[currentPos.getX()][currentPos.getY()].visit();
         }
 
     }

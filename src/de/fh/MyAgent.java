@@ -24,20 +24,14 @@ import de.fh.util.Position;
 class MyAgent implements IAgentActions, IAgentState {
 
     private AgentAction nextAction = AgentAction.START_GAME;
-
-    private int actionCounter = 0;
-    
     private AgentPercept agPercept;
-
     private WorldInformation info;
-    
-    private Scoreboard sb = new Scoreboard(1000);
 
-    private int lastWumpusId = 0;
-
+    //Statistics
     private boolean goldFound = false;
-
     private int arrowsShoot = 0;
+    private Scoreboard sb = new Scoreboard(1000);
+    private int lastWumpusId = 0;
 
     public static void main(String[] args) {
         MyAgent ki = new MyAgent();
@@ -65,7 +59,7 @@ class MyAgent implements IAgentActions, IAgentState {
         });
         guiThread.start();
 
-        /**
+        /*
          *In dem Startinfo Objekt befinden sich alle Startinformationen,
          *auf die die "interne Welt", die Wissenbasis aufbaut
          * Achtung: Die Feldgröße ist im Standard unbekannt also -1
@@ -93,6 +87,7 @@ class MyAgent implements IAgentActions, IAgentState {
 
         agPercept = (AgentPercept) percept;
 
+        //Update State-Modell
         info.doUpdate(agPercept, nextAction, actionEffect);
 
 
@@ -132,27 +127,27 @@ class MyAgent implements IAgentActions, IAgentState {
      */
     @Override
     public IAction chooseAction() {
-    	
-    	if(agPercept.isGold()){
+
+        //grab gold
+        if(agPercept.isGold()){
     		sb.changeScore(100);
     		goldFound = true;
     		nextAction = AgentAction.GRAB;
     		return nextAction;
     	}
 
-    	//Fight
+        //try to calculateFightPosition against wumpus
         WumpusFighter fighter = new WumpusFighter(info);
         nextAction = fighter.nextMove();
         if(nextAction == AgentAction.SHOOT){
             lastWumpusId = fighter.getCurrentTarget().getId();
             arrowsShoot++;
         }
-
         if(nextAction != null){
             return nextAction;
         }
 
-        //discover world
+        //discover world, if no calculateFightPosition is going on
         try{
             nextAction = new WorldDiscoverer(info).nextMove();
         }catch(Exception e){
@@ -173,17 +168,19 @@ class MyAgent implements IAgentActions, IAgentState {
 
 
         }
-   
-        
+
+
         sb.changeScore(-1);
-        System.out.println(sb.getScore());
-        actionCounter++;
+        System.out.println("Current Score " + sb.getScore());
         if(nextAction == null){
             return chooseAction();
         }
         return nextAction;
     }
 
+    /**
+     * Prints endInfo
+     */
     private void endInfo() {
         System.out.println("#####################################################");
         System.out.println("Ich hoffe ich habe die Map gut geschafft! :)");
