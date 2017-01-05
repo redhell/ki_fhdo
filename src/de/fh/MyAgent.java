@@ -160,6 +160,11 @@ class MyAgent implements IAgentActions, IAgentState {
 
         //discover world, if no calculateFightPosition is going on
         try{
+            try {
+                nextAction = new WorldDiscoverer(info).nextMove();
+            }catch (Exception e){
+                info.reinitWumpusTracker();
+            }
             nextAction = new WorldDiscoverer(info).nextMove();
         }catch(Exception e){
             if (wumpusKilled > 0) {
@@ -174,7 +179,6 @@ class MyAgent implements IAgentActions, IAgentState {
                     endInfo();
                 }
             }else{
-                info.reinitWumpusTracker();
                 nextAction = null;
             }
         }

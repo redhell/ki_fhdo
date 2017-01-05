@@ -3,6 +3,8 @@ package de.fh.environment;
 import de.fh.util.Position;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class WumpusTracker {
     private HashMap<Integer, WumpusInfo> wumpis = new HashMap<>();
@@ -63,5 +65,15 @@ public class WumpusTracker {
      */
     public void wumpusKilled(int id){
         wumpis.remove(id);
+    }
+
+    public void deleteAllIdsBut(HashSet<Integer> ids) {
+        HashMap<Integer, WumpusInfo> old = wumpis;
+        wumpis = new HashMap<>();
+        for (Integer id : ids){
+            if(old.containsKey(id)){
+                wumpis.put(id, old.get(id));
+            }
+        }
     }
 }

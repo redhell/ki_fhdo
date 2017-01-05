@@ -9,6 +9,8 @@ import de.fh.gui.WorldVisualizerPane;
 import de.fh.util.DIRECTION;
 import de.fh.util.Position;
 
+import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.Stack;
 
 public class WorldInformation implements IDrawableWorld {
@@ -249,12 +251,12 @@ public class WorldInformation implements IDrawableWorld {
 
     public void reinitWumpusTracker() {
         System.out.println("reinit tracker");
-        wumpusTracker.clear();
+        HashSet<Integer> ids = new HashSet<>();
         for (int i = 0; i < 100; i++) {
             if (lastPercept.getWumpusStenchRadar()[i][0] != 0) {
-                wumpusTracker.updateWumpus(lastPercept.getWumpusStenchRadar()[i][0], lastPercept.getWumpusStenchRadar()[i][1]);
+                ids.add(lastPercept.getWumpusStenchRadar()[i][0]);
             }
         }
-        wumpusTracker.finishRound();
+        wumpusTracker.deleteAllIdsBut(ids);
     }
 }
