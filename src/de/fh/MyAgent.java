@@ -131,7 +131,7 @@ class MyAgent implements IAgentActions, IAgentState {
      */
     @Override
     public IAction chooseAction() {
-
+        sb.changeScore(-1);
         //grab gold
         if(agPercept.isGold()){
     		sb.changeScore(100);
@@ -140,7 +140,7 @@ class MyAgent implements IAgentActions, IAgentState {
     		return nextAction;
     	}
         
-        sb.changeScore(-1);
+
 
         //try to calculateFightPosition against wumpus
         //solange weniger Pfeile verschossen wurden als man hat
