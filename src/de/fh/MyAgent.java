@@ -3,6 +3,7 @@ package de.fh;
 import de.fh.agentI.IAction;
 import de.fh.agentI.IAgentActions;
 import de.fh.agentI.IAgentState;
+import de.fh.agentMode.GoHomeMode;
 import de.fh.agentMode.RandomTarget;
 import de.fh.agentMode.WorldDiscoverer;
 import de.fh.agentMode.WumpusFighter;
@@ -35,6 +36,7 @@ class MyAgent implements IAgentActions, IAgentState {
     private Scoreboard sb = new Scoreboard(1000);
     private int lastWumpusId = 0;
     private int wumpusKilled = 0;
+    private boolean goHome = false;
 
     public static void main(String[] args) {
         MyAgent ki = new MyAgent();
@@ -139,6 +141,19 @@ class MyAgent implements IAgentActions, IAgentState {
     		nextAction = AgentAction.GRAB;
     		return nextAction;
     	}
+        if (goldFound && wumpusKilled > 0) {
+            goHome = true;
+        }
+
+        if (goHome) {
+            GoHomeMode goHome = new GoHomeMode(info);
+            nextAction = goHome.nextMove();
+
+            if (nextAction == AgentAction.EXIT_TRIAL) {
+                endInfo();
+            }
+            return nextAction;
+        }
         
 
 
@@ -170,9 +185,8 @@ class MyAgent implements IAgentActions, IAgentState {
             if (wumpusKilled > 0) {
                 nextAction = AgentAction.NO_ACTION;
                 // Zurück zum Start +100 Pt.
-                if(!info.getPosition().equals(new Position(1,1))) {
-                    info.setGoHome();
-                    nextAction = null;
+                if (!info.getPosition().equals(new Position(1, 1)) && !goHome) {
+                    goHome = true;
                 } else {
                     sb.changeScore(100);
                     nextAction = AgentAction.EXIT_TRIAL;
@@ -187,7 +201,8 @@ class MyAgent implements IAgentActions, IAgentState {
         if(nextAction == null){
             nextAction = new RandomTarget(info).nextMove();
             if (nextAction == null) {
-                //gibe it up
+                //give it up
+                endInfo();
                 return AgentAction.EXIT_TRIAL;
             }
 
@@ -207,16 +222,17 @@ class MyAgent implements IAgentActions, IAgentState {
         System.out.println("Pfeile verschossen: " + arrowsShoot);
         System.out.println("#####################################################");
     }
-    
+
+
     private int calculateArrows(){
     	int arrows = 5;
     	
     	//Pfeile verdoppeln sich fuer jeden existierenden Wumpus
     	for(int i = 0; i < agPercept.getWumpusStenchRadar().length; i++){
     		if(agPercept.getWumpusStenchRadar()[i][0] != 0)
-    			arrows*=2;;
-    	}
-    	
-    	return arrows;
+                arrows *= 2;
+        }
+
+        return arrows;
     }
 }
